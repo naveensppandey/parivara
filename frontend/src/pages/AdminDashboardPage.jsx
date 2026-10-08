@@ -14,7 +14,10 @@ import {
   RefreshCw,
   Search,
   Eye,
-  Filter
+  Filter,
+  MessageSquare,
+  Phone,
+  ExternalLink
 } from 'lucide-react';
 
 const AdminDashboardPage = () => {
@@ -48,6 +51,9 @@ const AdminDashboardPage = () => {
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
       );
+      if (selectedOrder && selectedOrder.id === orderId) {
+        setSelectedOrder((prev) => ({ ...prev, status: newStatus }));
+      }
       addToast(`Order ${orderId} updated to ${newStatus}`, 'success');
     } catch (err) {
       addToast('Failed to update order status', 'error');
@@ -83,6 +89,14 @@ const AdminDashboardPage = () => {
       default:
         return 'bg-stone-100 text-stone-800 border-stone-300';
     }
+  };
+
+  const getWhatsAppLink = (order) => {
+    if (!order || !order.phone) return '#';
+    let digits = order.phone.replace(/\D/g, '');
+    if (digits.length === 10) digits = '91' + digits;
+    const msg = `Namaste ${order.customerName}! Thank you for your order (${order.id}) with PARIVARA Natural Farming. Total: ₹${order.totalAmount}. We are processing your order.`;
+    return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
   };
 
   return (
@@ -204,6 +218,7 @@ const AdminDashboardPage = () => {
                   <th className="p-4">Customer</th>
                   <th className="p-4">Phone</th>
                   <th className="p-4">City</th>
+                  <th className="p-4">Items</th>
                   <th className="p-4">Total</th>
                   <th className="p-4">Date</th>
                   <th className="p-4">Status</th>
@@ -213,50 +228,58 @@ const AdminDashboardPage = () => {
               <tbody className="divide-y divide-stone-100 font-medium">
                 {filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="p-8 text-center text-stone-500 font-semibold">
+                    <td colSpan="9" className="p-8 text-center text-stone-500 font-semibold">
                       No orders found matching status "{statusFilter}".
                     </td>
                   </tr>
                 ) : (
-                  filteredOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-stone-50/80 transition">
-                      <td className="p-4 font-extrabold text-parivara-900">{order.id}</td>
-                      <td className="p-4 font-bold text-stone-800">{order.customerName}</td>
-                      <td className="p-4">
-                        <a href={`tel:${order.phone}`} className="text-parivara-700 hover:underline">
-                          {order.phone}
-                        </a>
-                      </td>
-                      <td className="p-4">{order.city}</td>
-                      <td className="p-4 font-extrabold text-stone-900">₹{order.totalAmount}</td>
-                      <td className="p-4 text-stone-500">
-                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Today'}
-                      </td>
-                      <td className="p-4">
-                        <select
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                          className={`px-2.5 py-1 rounded-lg border text-xs font-bold focus:outline-none ${getStatusBadgeClass(order.status)}`}
-                        >
-                          <option value="NEW">NEW</option>
-                          <option value="CONTACTED">CONTACTED</option>
-                          <option value="CONFIRMED">CONFIRMED</option>
-                          <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY</option>
-                          <option value="DELIVERED">DELIVERED</option>
-                          <option value="CANCELLED">CANCELLED</option>
-                        </select>
-                      </td>
-                      <td className="p-4 text-right">
-                        <button
-                          onClick={() => setSelectedOrder(order)}
-                          className="bg-stone-100 hover:bg-parivara-100 text-stone-700 hover:text-parivara-800 font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 ml-auto"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>View Details</span>
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                  filteredOrders.map((order) => {
+                    const totalQty = order.items
+                      ? order.items.reduce((s, i) => s + (i.quantity || 1), 0)
+                      : 1;
+                    return (
+                      <tr key={order.id} className="hover:bg-stone-50/80 transition">
+                        <td className="p-4 font-extrabold text-parivara-900">{order.id}</td>
+                        <td className="p-4 font-bold text-stone-800">{order.customerName}</td>
+                        <td className="p-4">
+                          <a href={`tel:${order.phone}`} className="text-parivara-700 hover:underline">
+                            {order.phone}
+                          </a>
+                        </td>
+                        <td className="p-4">{order.city}</td>
+                        <td className="p-4 font-semibold text-stone-700">
+                          {totalQty} {totalQty === 1 ? 'item' : 'items'}
+                        </td>
+                        <td className="p-4 font-extrabold text-stone-900">₹{order.totalAmount}</td>
+                        <td className="p-4 text-stone-500">
+                          {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Today'}
+                        </td>
+                        <td className="p-4">
+                          <select
+                            value={order.status}
+                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                            className={`px-2.5 py-1 rounded-lg border text-xs font-bold focus:outline-none ${getStatusBadgeClass(order.status)}`}
+                          >
+                            <option value="NEW">NEW</option>
+                            <option value="CONTACTED">CONTACTED</option>
+                            <option value="CONFIRMED">CONFIRMED</option>
+                            <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY</option>
+                            <option value="DELIVERED">DELIVERED</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                          </select>
+                        </td>
+                        <td className="p-4 text-right">
+                          <button
+                            onClick={() => setSelectedOrder(order)}
+                            className="bg-stone-100 hover:bg-parivara-100 text-stone-700 hover:text-parivara-800 font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 ml-auto"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>View Details</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -269,42 +292,122 @@ const AdminDashboardPage = () => {
       {/* Order Detail Modal */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+            
+            {/* Modal Header */}
             <div className="flex justify-between items-center border-b border-stone-100 pb-3">
-              <h3 className="font-extrabold text-lg text-stone-900">Order {selectedOrder.id}</h3>
-              <button onClick={() => setSelectedOrder(null)} className="text-stone-400 hover:text-stone-700 font-bold">
-                ✕
-              </button>
+              <div>
+                <h3 className="font-extrabold text-lg text-stone-900">Order #{selectedOrder.id}</h3>
+                <span className="text-xs text-stone-500">
+                  Placed on {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : 'Recent'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`px-2.5 py-1 rounded-lg border text-xs font-bold ${getStatusBadgeClass(selectedOrder.status)}`}>
+                  {selectedOrder.status}
+                </span>
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="text-stone-400 hover:text-stone-700 font-bold p-1"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
-            <div className="space-y-2 text-xs text-stone-700">
-              <p><strong>Customer:</strong> {selectedOrder.customerName}</p>
-              <p><strong>Phone:</strong> {selectedOrder.phone}</p>
-              <p><strong>Email:</strong> {selectedOrder.email || 'N/A'}</p>
-              <p><strong>Address:</strong> {selectedOrder.address}, {selectedOrder.city} - {selectedOrder.pincode}</p>
-              {selectedOrder.notes && <p><strong>Notes:</strong> {selectedOrder.notes}</p>}
+            {/* Customer Info Box */}
+            <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2 text-xs text-stone-700">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-bold text-stone-900 text-sm">{selectedOrder.customerName}</h4>
+                  <p className="text-stone-600 font-medium">{selectedOrder.address}, {selectedOrder.city} - {selectedOrder.pincode}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-4 pt-1 text-stone-600 font-medium border-t border-stone-200/60">
+                <p><strong>Phone:</strong> <a href={`tel:${selectedOrder.phone}`} className="text-parivara-700 hover:underline">{selectedOrder.phone}</a></p>
+                {selectedOrder.email && <p><strong>Email:</strong> {selectedOrder.email}</p>}
+                {selectedOrder.paymentMethod && <p><strong>Payment:</strong> {selectedOrder.paymentMethod}</p>}
+              </div>
+              {selectedOrder.notes && (
+                <p className="text-amber-800 bg-amber-50 p-2 rounded-xl border border-amber-200 mt-2">
+                  <strong>Notes:</strong> {selectedOrder.notes}
+                </p>
+              )}
             </div>
 
-            <div className="pt-3 border-t border-stone-200">
-              <h4 className="font-bold text-stone-900 text-xs mb-2">Order Items:</h4>
-              <div className="space-y-2 text-xs">
+            {/* WhatsApp Direct Action Button */}
+            <a
+              href={getWhatsAppLink(selectedOrder)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-sm"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>WhatsApp Customer ({selectedOrder.phone})</span>
+              <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+            </a>
+
+            {/* Order Items Breakdown */}
+            <div className="space-y-3">
+              <h4 className="font-bold text-stone-900 text-xs uppercase tracking-wider">Order Items Snapshot</h4>
+              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                 {selectedOrder.items && selectedOrder.items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between p-2 bg-stone-50 rounded-lg">
-                    <span>{item.productName || item.name} ({item.weight || ''}) x {item.quantity}</span>
-                    <strong className="text-stone-900">₹{item.itemTotal || (item.price * item.quantity)}</strong>
+                  <div key={idx} className="flex items-center justify-between p-3 bg-stone-50 rounded-2xl border border-stone-100">
+                    <div className="flex items-center gap-3">
+                      {item.productImage ? (
+                        <img
+                          src={item.productImage}
+                          alt={item.productName || item.name}
+                          className="w-12 h-12 object-cover rounded-xl border border-stone-200"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-parivara-100 text-parivara-800 rounded-xl flex items-center justify-center font-bold text-xs">
+                          <Sprout className="w-6 h-6 text-parivara-700" />
+                        </div>
+                      )}
+                      <div>
+                        <span className="font-bold text-stone-900 block text-xs">
+                          {item.productName || item.name}
+                        </span>
+                        <div className="flex items-center gap-2 text-[11px] text-stone-500 mt-0.5">
+                          {item.weight && <span className="bg-stone-200 text-stone-700 font-semibold px-1.5 py-0.5 rounded">{item.weight}</span>}
+                          <span>₹{item.price} × {item.quantity}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <strong className="text-stone-900 text-xs">
+                      ₹{item.itemTotal || (item.price * item.quantity)}
+                    </strong>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-between items-center border-t border-stone-200 pt-3 text-sm font-extrabold">
-              <span>Total:</span>
-              <span className="text-parivara-900 text-base">₹{selectedOrder.totalAmount}</span>
+            {/* Order Total Breakdown */}
+            <div className="border-t border-stone-200 pt-3 space-y-1.5 text-xs text-stone-600">
+              <div className="flex justify-between">
+                <span>Subtotal:</span>
+                <span className="font-semibold text-stone-800">
+                  ₹{selectedOrder.items ? selectedOrder.items.reduce((s, i) => s + (i.itemTotal || i.price * i.quantity), 0) : selectedOrder.totalAmount}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Delivery Fee:</span>
+                <span className="font-semibold text-stone-800">
+                  {selectedOrder.deliveryFee !== undefined
+                    ? (selectedOrder.deliveryFee === 0 ? 'FREE' : `₹${selectedOrder.deliveryFee}`)
+                    : (selectedOrder.totalAmount >= 499 ? 'FREE' : '₹40')}
+                </span>
+              </div>
+              <div className="flex justify-between items-center border-t border-stone-200 pt-2 text-sm font-extrabold text-stone-900">
+                <span>Grand Total:</span>
+                <span className="text-parivara-900 text-base">₹{selectedOrder.totalAmount}</span>
+              </div>
             </div>
 
             <button
               onClick={() => setSelectedOrder(null)}
-              className="w-full bg-stone-900 text-white font-bold py-2.5 rounded-xl text-xs"
+              className="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-2.5 rounded-xl text-xs transition"
             >
               Close Window
             </button>
@@ -317,3 +420,4 @@ const AdminDashboardPage = () => {
 };
 
 export default AdminDashboardPage;
+

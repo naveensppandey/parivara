@@ -12,6 +12,7 @@ public class OrderItem {
 
     private Long productId;
     private String productName;
+    private String productImage;
     private String weight;
     private Double price;
     private Integer quantity;
@@ -19,9 +20,10 @@ public class OrderItem {
 
     public OrderItem() {}
 
-    public OrderItem(Long productId, String productName, String weight, Double price, Integer quantity, Double itemTotal) {
+    public OrderItem(Long productId, String productName, String productImage, String weight, Double price, Integer quantity, Double itemTotal) {
         this.productId = productId;
         this.productName = productName;
+        this.productImage = productImage;
         this.weight = weight;
         this.price = price;
         this.quantity = quantity;
@@ -36,6 +38,9 @@ public class OrderItem {
 
     public String getProductName() { return productName; }
     public void setProductName(String productName) { this.productName = productName; }
+
+    public String getProductImage() { return productImage; }
+    public void setProductImage(String productImage) { this.productImage = productImage; }
 
     public String getWeight() { return weight; }
     public void setWeight(String weight) { this.weight = weight; }

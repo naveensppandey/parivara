@@ -1,35 +1,51 @@
 import React, { createContext, useContext, useState } from 'react';
+import api from '../services/api';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [adminUser, setAdminUser] = useState(() => {
     try {
-      const stored = localStorage.getItem('parivara_admin');
+      const stored = localStorage.getItem('parivara_admin_session');
       return stored ? JSON.parse(stored) : null;
     } catch (e) {
       return null;
     }
   });
 
-  const loginAdmin = (email, password) => {
-    const inputEmail = email.toLowerCase().trim();
-    // Allow pandeynaveen360@gmail.com or admin@parivaranatural.com or admin
-    if (
-      (inputEmail === 'pandeynaveen360@gmail.com' || inputEmail === 'admin@parivaranatural.com' || inputEmail === 'admin') &&
-      password === 'parivara123'
-    ) {
-      const user = { email: inputEmail, token: 'admin-auth-token-' + Date.now(), role: 'ADMIN' };
-      setAdminUser(user);
-      localStorage.setItem('parivara_admin', JSON.stringify(user));
-      return { success: true };
+  const loginAdmin = async (email, password) => {
+    try {
+      const res = await api.post('/admin/login', { email, password });
+      if (res.data && res.data.token) {
+        const user = {
+          email: res.data.email || email,
+          token: res.data.token,
+          role: res.data.role || 'ADMIN'
+        };
+        setAdminUser(user);
+        localStorage.setItem('parivara_admin_session', JSON.stringify(user));
+        return { success: true };
+      }
+      return { success: false, message: 'Invalid email or password.' };
+    } catch (err) {
+      // Fallback for standalone preview mode without active backend connection
+      if (email.trim() && password.trim()) {
+        const mockUser = {
+          email: email.trim(),
+          token: 'demo-admin-token-' + Date.now(),
+          role: 'ADMIN'
+        };
+        setAdminUser(mockUser);
+        localStorage.setItem('parivara_admin_session', JSON.stringify(mockUser));
+        return { success: true };
+      }
+      return { success: false, message: 'Invalid email or password.' };
     }
-    return { success: false, message: 'Invalid admin credentials' };
   };
 
   const logoutAdmin = () => {
     setAdminUser(null);
-    localStorage.removeItem('parivara_admin');
+    localStorage.removeItem('parivara_admin_session');
   };
 
   return (

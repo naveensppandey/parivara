@@ -136,43 +136,43 @@ public class DataInitializer implements CommandLineRunner {
 
             CustomerOrder demo1 = new CustomerOrder();
             demo1.setId("PAR-100241");
-            demo1.setCustomerName("Rajesh Tripathi");
-            demo1.setPhone("9839012345");
-            demo1.setEmail("rajesh.t@example.com");
-            demo1.setAddress("B-12/45, Lanka Chauraha");
-            demo1.setCity("Varanasi");
-            demo1.setPincode("221005");
+            demo1.setCustomerName("Rahul Kumar");
+            demo1.setPhone("9305762044");
+            demo1.setEmail("rahul.k@example.com");
+            demo1.setAddress("House No. 12, Civil Lines Near Court");
+            demo1.setCity("Mirzapur");
+            demo1.setPincode("231001");
             demo1.setDeliveryPreference("Standard Doorstep Delivery");
             demo1.setNotes("Call before coming");
             demo1.setSubtotal(348.0);
-            demo1.setDeliveryFee(0.0);
-            demo1.setTotalAmount(348.0);
-            demo1.setStatus("CONFIRMED");
+            demo1.setDeliveryFee(40.0);
+            demo1.setTotalAmount(388.0);
+            demo1.setStatus("NEW");
             demo1.setPaymentMethod("Cash / UPI on Delivery");
             demo1.setCreatedAt(LocalDateTime.now().minusDays(1));
 
-            OrderItem item1 = new OrderItem(1L, "Parivara Cow Manure (2 KG)", "2 KG", 149.0, 1, 149.0);
-            OrderItem item2 = new OrderItem(2L, "Parivara Vermicompost (2 KG)", "2 KG", 199.0, 1, 199.0);
+            OrderItem item1 = new OrderItem(1L, "Parivara Cow Manure", "/images/products/parivara-cow-manure-2kg.jpg", "2 KG", 149.0, 1, 149.0);
+            OrderItem item2 = new OrderItem(2L, "Parivara Vermicompost", "/images/products/parivara-vermicompost-2kg.jpg", "2 KG", 199.0, 1, 199.0);
             demo1.setItems(List.of(item1, item2));
 
             CustomerOrder demo2 = new CustomerOrder();
             demo2.setId("PAR-100242");
             demo2.setCustomerName("Sanjay Verma");
-            demo2.setPhone("9415098765");
+            demo2.setPhone("7007751458");
             demo2.setEmail("sanjay.v@example.com");
-            demo2.setAddress("42, Civil Lines");
-            demo2.setCity("Mirzapur");
-            demo2.setPincode("231001");
+            demo2.setAddress("B-12/45, Lanka Chauraha");
+            demo2.setCity("Varanasi");
+            demo2.setPincode("221005");
             demo2.setDeliveryPreference("Standard Doorstep Delivery");
             demo2.setNotes("Leave at front porch if absent");
-            demo2.setSubtotal(199.0);
-            demo2.setDeliveryFee(40.0);
-            demo2.setTotalAmount(239.0);
-            demo2.setStatus("NEW");
+            demo2.setSubtotal(499.0);
+            demo2.setDeliveryFee(0.0);
+            demo2.setTotalAmount(499.0);
+            demo2.setStatus("CONFIRMED");
             demo2.setPaymentMethod("Cash / UPI on Delivery");
             demo2.setCreatedAt(LocalDateTime.now());
 
-            OrderItem item3 = new OrderItem(2L, "Parivara Vermicompost (2 KG)", "2 KG", 199.0, 1, 199.0);
+            OrderItem item3 = new OrderItem(5L, "Parivara Organic Garden Starter Kit", "/images/products/parivara-cow-manure-2kg.jpg", "4.5 KG", 499.0, 1, 499.0);
             demo2.setItems(List.of(item3));
 
             orderRepository.saveAll(List.of(demo1, demo2));
