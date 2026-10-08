@@ -5,7 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { Sprout, Lock, Mail, ArrowRight } from 'lucide-react';
 
 const AdminLoginPage = () => {
-  const [email, setEmail] = useState('admin@parivaranatural.com');
+  const [email, setEmail] = useState('pandeynaveen360@gmail.com');
   const [password, setPassword] = useState('parivara123');
   const { loginAdmin } = useAuth();
   const { addToast } = useToast();
@@ -36,7 +36,7 @@ const AdminLoginPage = () => {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-stone-300 uppercase mb-1">Email / Username</label>
+            <label className="block text-xs font-bold text-stone-300 uppercase mb-1">Admin Email / Username</label>
             <div className="relative">
               <input
                 type="text"
@@ -73,8 +73,8 @@ const AdminLoginPage = () => {
         </form>
 
         <div className="p-3 bg-parivara-950/60 rounded-xl border border-parivara-800 text-[11px] text-stone-400 space-y-1">
-          <p>🔑 <strong>Demo Admin Credentials:</strong></p>
-          <p>Email: <code className="text-amberGold-400">admin@parivaranatural.com</code></p>
+          <p>🔑 <strong>Admin Credentials:</strong></p>
+          <p>Email: <code className="text-amberGold-400">pandeynaveen360@gmail.com</code></p>
           <p>Password: <code className="text-amberGold-400">parivara123</code></p>
         </div>
 
