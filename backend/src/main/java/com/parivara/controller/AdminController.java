@@ -21,17 +21,16 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "*")
 public class AdminController {
 
     private final OrderService orderService;
     private final ProductService productService;
     private final ContactService contactService;
 
-    @Value("${parivara.admin.email:admin@parivaranatural.com}")
+    @Value("${parivara.admin.email}")
     private String adminEmail;
 
-    @Value("${parivara.admin.password:parivara123}")
+    @Value("${parivara.admin.password}")
     private String adminPassword;
 
     @Autowired

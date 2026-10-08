@@ -7,11 +7,13 @@
 export const BUSINESS_CONFIG = {
   name: "PARIVARA",
   tagline: "Natural Farming • Healthy Plants",
-  legalName: "Parivara Natural Products Pvt. Ltd.",
+  legalName: "Parivara Natural Products",
   
-  // Contact details (Configurable placeholders)
-  phone: "+91 98765 43210",
-  whatsappNumber: "919876543210", // Raw numbers without + for WhatsApp web links
+  // Contact details (Updated as requested: 9305762044 and 7007751458)
+  phone: "+91 93057 62044",
+  secondaryPhone: "+91 70077 51458",
+  whatsappNumber: "919305762044", // Raw numbers without + for WhatsApp web links
+  secondaryWhatsappNumber: "917007751458",
   email: "care@parivaranatural.com",
   address: "Parivara Hub, Near Lanka Chauraha, Varanasi, UP - 221005",
   
@@ -28,7 +30,7 @@ export const BUSINESS_CONFIG = {
   youtube: "https://youtube.com/@parivaranatural",
 
   // Top Announcement Bar
-  announcementText: "🌱 Natural Gardening Products | Local Delivery in Varanasi & Mirzapur | Easy WhatsApp Orders",
+  announcementText: "🌱 Natural Gardening Products | Local Delivery in Varanasi & Mirzapur | Call/WhatsApp: 9305762044",
 
   // Configurable Pricing Central Data
   prices: {

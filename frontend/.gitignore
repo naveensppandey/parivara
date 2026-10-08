@@ -1,6 +1,9 @@
-node_modules
-dist
-dist-ssr
+node_modules/
+dist/
+dist-ssr/
+.env
+.env.*
+!.env.example
 *.local
-.vscode
+.vscode/
 .DS_Store

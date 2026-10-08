@@ -1,5 +1,8 @@
-node_modules
-dist
-target
-.DS_Store
+node_modules/
+dist/
+target/
+.env
+.env.*
+!.env.example
 *.log
+.DS_Store
